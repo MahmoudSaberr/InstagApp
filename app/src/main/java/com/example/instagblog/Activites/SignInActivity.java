@@ -1,4 +1,4 @@
-package com.example.instagblog;
+package com.example.instagblog.Activites;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.instagblog.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -19,8 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class SignInActivity extends AppCompatActivity {
 
     private EditText emailSignIn_et,passSignIn_et;
-    private Button signIn_btn;
-    private TextView signUp_tv;
     private FirebaseAuth mAuth;
 
     @Override
@@ -32,15 +31,11 @@ public class SignInActivity extends AppCompatActivity {
 
         emailSignIn_et = findViewById(R.id.sign_in_email_et);
         passSignIn_et = findViewById(R.id.sign_in_password_et);
-        signIn_btn =findViewById(R.id.sign_in_btn);
-        signUp_tv =findViewById(R.id.sign_up_tv);
+        Button signIn_btn = findViewById(R.id.sign_in_btn);
+        TextView signUp_tv = findViewById(R.id.sign_up_tv);
 
-        signUp_tv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(SignInActivity.this, SignUpActivity.class));
-            }
-        });
+        signUp_tv.setOnClickListener(view ->
+                startActivity(new Intent(SignInActivity.this, SignUpActivity.class)));
 
 
         signIn_btn.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +54,7 @@ public class SignInActivity extends AppCompatActivity {
                                 finish();
                             }
                             else {
+                                //noinspection ConstantConditions
                                 Toast.makeText(SignInActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -67,9 +63,7 @@ public class SignInActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(SignInActivity.this, "Please Enter Email and Password", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-
     }
 }

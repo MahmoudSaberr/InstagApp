@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_blue"
-    tools:context=".SplashActivity">
+    tools:context=".Activites.SplashActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -31,4 +32,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_linked_camera_24"
         android:contentDescription="TODO" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

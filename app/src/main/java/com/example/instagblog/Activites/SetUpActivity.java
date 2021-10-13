@@ -1,4 +1,4 @@
-package com.example.instagblog;
+package com.example.instagblog.Activites;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,17 +14,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.instagblog.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,14 +40,12 @@ public class SetUpActivity extends AppCompatActivity {
 
     private CircleImageView circleImageView;
     private EditText profileName_et;
-    private Button save_btn;
-    private FirebaseAuth auth;
+
     private StorageReference storageReference;
     private FirebaseFirestore firestore;
-    private FirebaseUser firebaseUser;
+
     private String Uid;
     private Uri imgUri = null;
-    private Toolbar setUpToolbar;
     private ProgressBar progressBar;
     private Boolean isPhotoSelected = false;
 
@@ -57,18 +54,15 @@ public class SetUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up);
 
-        setUpToolbar = findViewById(R.id.set_up_toolbar);
-        setSupportActionBar(setUpToolbar);
-        getSupportActionBar().setTitle("Profile");
+        setToolbar();
 
-        progressBar =findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
 
         circleImageView = findViewById(R.id.circleImageView);
-        profileName_et =findViewById(R.id.set_up_profile_name_et);
-        save_btn = findViewById(R.id.set_up_save_btn);
+        profileName_et = findViewById(R.id.set_up_profile_name_et);
 
-        auth =FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         Uid = auth.getCurrentUser().getUid();
 
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -77,10 +71,9 @@ public class SetUpActivity extends AppCompatActivity {
         firestore.collection("Users").document(Uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    if(task.getResult().exists()) // means if there data or not
-                    {
+                if(task.isSuccessful()) {
+                    if(task.getResult().exists()) { // means if there data or not
+
                         String name = task.getResult().getString("name");
                         String imageUrl = task.getResult().getString("image");
                         imgUri = Uri.parse(imageUrl);
@@ -108,8 +101,7 @@ public class SetUpActivity extends AppCompatActivity {
                         //it means the permission is not granted so for that asking the permission
                         ActivityCompat.requestPermissions(SetUpActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
                     }
-                    else //it means the permission is granted
-                    {
+                    else { //it means the permission is granted
                         // start picker to get image for cropping and then use the image in cropping activity
                         CropImage.activity()
                                 .setGuidelines(CropImageView.Guidelines.ON)
@@ -119,49 +111,13 @@ public class SetUpActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        save_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressBar.setVisibility(View.VISIBLE);
-                String name = profileName_et.getText().toString();
-                /*
-                create one child inside our storage as a profile picture and inside that it
-                will have another child so that will be user id .jpg
-                */
-                StorageReference imgRef = storageReference.child("Profile_pics").child(Uid + ".jpg");
-                if (isPhotoSelected) {
-                    if (!name.isEmpty() && imgUri != null) {
-
-                        imgRef.putFile(imgUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            //create one method for saving this details to the fireStore
-                                            saveToFireStore(task, name, uri);
-                                        }
-                                    });
-
-                                } else {
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(SetUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    } else {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(SetUpActivity.this, "Please Select picture and write your name", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else
-                {
-                    saveToFireStore(null,name,imgUri);
-                }
-            }
-        });
+    private void setToolbar() {
+        Toolbar setUpToolbar = findViewById(R.id.set_up_toolbar);
+        setSupportActionBar(setUpToolbar);
+        //noinspection ConstantConditions
+        getSupportActionBar().setTitle("Profile");
     }
 
     private void saveToFireStore(Task<UploadTask.TaskSnapshot> task, String name, Uri downloadUri) {
@@ -181,7 +137,6 @@ public class SetUpActivity extends AppCompatActivity {
             downloadUri  = imgUri;
         }
 */
-
         HashMap<String , Object> map = new HashMap<>();
         map.put("name",name);
         map.put("image",downloadUri.toString());
@@ -189,14 +144,11 @@ public class SetUpActivity extends AppCompatActivity {
         firestore.collection("Users").document(Uid).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
-                {
+                if(task.isSuccessful()) {
                     progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(SetUpActivity.this, "Profile Settings Save", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(SetUpActivity.this,MainActivity.class));
-                }
-                else
-                {
+                }else{
                     progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(SetUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -216,9 +168,50 @@ public class SetUpActivity extends AppCompatActivity {
 
                 isPhotoSelected = true;
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                //noinspection ConstantConditions
                 Toast.makeText(this,result.getError().getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
 
+    }
+
+    public void saveData(View view) {
+        progressBar.setVisibility(View.VISIBLE);
+        String name = profileName_et.getText().toString();
+                /*
+                create one child inside our storage as a profile picture and inside that it
+                will have another child so that will be user id .jpg
+                */
+        StorageReference imgRef = storageReference.child("Profile_pics").child(Uid + ".jpg");
+        if (isPhotoSelected) {
+            if (!name.isEmpty() && imgUri != null) {
+
+                imgRef.putFile(imgUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    //create one method for saving this details to the fireStore
+                                    saveToFireStore(task, name, uri);
+                                }
+                            });
+
+                        } else {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(SetUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            } else {
+                progressBar.setVisibility(View.INVISIBLE);
+                Toast.makeText(SetUpActivity.this, "Please Select picture and write your name", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+        {
+            saveToFireStore(null,name,imgUri);
+        }
     }
 }
