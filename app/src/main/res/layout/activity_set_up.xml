@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SetUpActivity">
+    tools:context=".Activites.SetUpActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/set_up_toolbar"
@@ -46,7 +46,8 @@
         app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
 
     <Button
-        android:id="@+id/set_up_save_btn"
+        android:id="@+id/savedatabtn"
+        android:onClick="saveData"
         android:layout_width="302dp"
         android:layout_height="48dp"
         android:layout_marginTop="63dp"
@@ -68,4 +69,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

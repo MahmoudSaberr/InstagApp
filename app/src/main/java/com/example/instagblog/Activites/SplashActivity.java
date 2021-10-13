@@ -20,14 +20,13 @@ public class SplashActivity extends AppCompatActivity {
 
         ConstraintLayout constraintLayout = findViewById(R.id.splash);
 
-
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.splash_animation);
         constraintLayout.startAnimation(animation);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this,SignUpActivity.class));
+                startActivity(new Intent(getApplicationContext(),MainActivity.class));
                 finish();
             }
         },2000);

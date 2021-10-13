@@ -14,4 +14,7 @@
     <string name="enter_caption">Write Caption Here....</string>
     <string name="add_comment">Add Comment</string>
     <string name="write_comment">Write Yout Comment Here...</string>
+    <string name="username">Username</string>
+    <string name="_19_11_2001">19/11/2001</string>
+    <string name="caption">caption</string>
 </resources>
